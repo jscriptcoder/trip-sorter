@@ -1,0 +1,19 @@
+/* Loading animation */
+@keyframes loading {
+    25% { content: "Loading app."; }
+    50% { content: "Loading app.."; }
+    75% { content: "Loading app..."; }
+} 
+
+.loading {
+    margin: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.loading:before {
+    content: "Loading app";
+    animation: loading 0.8s infinite;
+}
+/* End Loading */
+
