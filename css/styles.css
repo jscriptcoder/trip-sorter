@@ -1,6 +1,12 @@
 /* General styles */
 * { box-sizing: border-box; }
 
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
 /* End General */
 
 /* Loading animation */
@@ -24,12 +30,19 @@
 
 
 /* Header */
-header {}
+header {
+    position: fixed;
+    padding: 20px;
+    width: 100%;
+}
+
+header h1 { margin: 0; }
+header h1 .glyphicon-briefcase { top: 5px; }
 /* End Header */
 
 
 /* Main */
-main {}
+main { padding-top: 150px; }
 
 main .trip-selector-wrapper {
     width: 400px;
@@ -38,8 +51,17 @@ main .trip-selector-wrapper {
 /* End Main */
 
 /* Footer */
-footer { padding: 20px; }
+footer {
+    position: fixed;
+    padding: 10px;
+    border-top: 1px solid lightgray;
+    width: 100%;
+    bottom: 0;
+    background-color: white;
+    z-index: 10;
+}
 footer .copyright {
     text-align: right;
+    font-size: large;
 }
 /* End Footer */
