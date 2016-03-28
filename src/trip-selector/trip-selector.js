@@ -25,10 +25,17 @@ export default class TripSelector {
     
     /**
      * Result view
-     * @type HTMLUListElement
+     * @type HTMLElement
      * @private
      */
-    result: HTMLUListElement;
+    result: HTMLElement;
+    
+    /**
+     * Alert message
+     * @type HTMLElement
+     * @private
+     */
+    alert: HTMLElement;
     
     /**
      * Departures dropdown
@@ -108,6 +115,7 @@ export default class TripSelector {
         // gets a hold of the DOM elements
         this.selector = this.el.querySelector('.selector');
         this.result = this.el.querySelector('.result');
+        this.alert = this.el.querySelector('.alert');
         
         this.from = this.el.querySelector('.from ul');
         this.to = this.el.querySelector('.to ul');
@@ -178,32 +186,42 @@ export default class TripSelector {
     /**
      * Gets trigger when the user clicks on search button
      * @event
+     * @param {MouseEvent} event
      * @private
      */
-    onSearchClick() {
+    onSearchClick(event) {
+        event.stopPropagation();
+        
         const departure = this.from.dataset['selected'];
         const arrival = this.to.dataset['selected'];
         const sortType = this.getSortType();
         let trips = [];
 
-        console.log(`From ${departure} to ${arrival}`);
-        
-        if (departure !== arrival) {
-            trips = this.api.deals.filter((deal) => deal.departure === departure && deal.arrival === arrival);
+        if (departure && arrival) {
 
-            if (trips && trips.length) {
-                TYPE_SORT[sortType](trips);
-                console.log(`Sorted by ${sortType}:`, trips);
+            console.log(`From ${departure} to ${arrival}`);
+            
+            if (departure !== arrival) {
+                trips = this.api.deals.filter((deal) => deal.departure === departure && deal.arrival === arrival);
 
-                this.showResult(trips);
-                
-                
+                if (trips && trips.length) {
+                    TYPE_SORT[sortType](trips);
+                    console.log(`Sorted by ${sortType}:`, trips);
+
+                    this.showResult(trips);
+
+
+                } else {
+                    this.shotAlert(`Sorry, but we could not find trips from <strong>${departure}</strong> to <strong>${arrival}</strong>`, 'warning');
+                }
             } else {
-                // TO-DO: there aren't trips from this city to the other
+                this.shotAlert('Ooops!!, Departure and arrival are the same');
             }
+            
         } else {
-            // TO-DO: departure is the same as arrival
+            this.shotAlert('Please, select both departure and arrival');
         }
+
     }
     
     /**
@@ -267,6 +285,26 @@ export default class TripSelector {
         
         this.trips.appendChild(itemTotal);
 
+    }
+    
+    shotAlert(message, type = 'danger') {
+        this.alert.innerHTML = message;
+        this.alert.classList.add(`alert-${type}`);
+        this.alert.classList.add('show');
+        
+        const onDocumentClick = () => {
+            this.hideAlert();
+            document.removeEventListener('click', onDocumentClick);
+        }
+        
+        // let's hide the message when clicking away
+        document.addEventListener('click', onDocumentClick);
+    }
+    
+    hideAlert() {
+        this.alert.innerHTML = '';
+        this.alert.classList.remove('show');
+        this.alert.className = 'alert';
     }
     
 }

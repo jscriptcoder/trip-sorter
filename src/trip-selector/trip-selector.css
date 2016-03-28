@@ -1,5 +1,7 @@
 .trip-selector {}
 
+.trip-selector .alert { display: none; }
+
 .trip-selector .input-group { margin-bottom: 15px; }
 
 .trip-selector .form-control[readonly] { background-color: white; }
