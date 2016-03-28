@@ -3,6 +3,7 @@
  */
 
 import 'babel/browser-polyfill'; // ES6 features polyfill
+import 'bootstrap/js/bootstrap'; // Third party library for UI
 import api from 'backend/response.json!'; // backend API
 import appView from './app.html!text'; // app view HTML
 import TripSelector from './trip-selector/trip-selector';

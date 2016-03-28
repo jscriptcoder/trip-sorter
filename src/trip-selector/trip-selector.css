@@ -1,0 +1,45 @@
+.trip-selector {}
+
+.trip-selector .input-group { margin-bottom: 15px; }
+
+.trip-selector .form-control[readonly] { background-color: white; }
+
+.trip-selector .list-trips {
+    list-style: none;
+    padding: 0;
+}
+
+.trip-selector .trips li {
+    /*
+    border: 1px solid grey;
+    padding 20px;
+    */
+}
+
+.trip-selector .list-trips .trip {
+    font-size: large;
+    float: left;
+}
+
+.trip-selector .list-trips .price {
+    font-size: large;
+    float: right;
+}
+
+.trip-selector .list-trips .details {
+    clear: both;
+    font-style: italic;
+}
+
+.trip-selector .total-item {
+    overflow: hidden; /* clearfix */
+}
+
+.trip-selector .total-item div {
+    font-size: large;
+    width: 33.33%;
+    float: left;
+}
+
+.trip-selector .total-item .duration { text-align: center; }
+.trip-selector .total-item .cost { text-align: right; }

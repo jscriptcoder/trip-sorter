@@ -1,3 +1,8 @@
+/* General styles */
+* { box-sizing: border-box; }
+
+/* End General */
+
 /* Loading animation */
 @keyframes loading {
     25% { content: "Loading app."; }
@@ -17,3 +22,24 @@
 }
 /* End Loading */
 
+
+/* Header */
+header {}
+/* End Header */
+
+
+/* Main */
+main {}
+
+main .trip-selector-wrapper {
+    width: 400px;
+}
+
+/* End Main */
+
+/* Footer */
+footer { padding: 20px; }
+footer .copyright {
+    text-align: right;
+}
+/* End Footer */

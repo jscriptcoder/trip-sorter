@@ -1,24 +1,61 @@
-<div class="selector">
-    <div>
-        <select class="from-sel">
-            <option value="">From...</option>
-        </select>    
+<div class="trip-selector panel panel-info">
+    
+    <div class="panel-heading">
+        <h3 class="panel-title">Trip selector</h3>
     </div>
+    
+    <div class="panel-body">
 
-    <div>
-        <select class="to-sel">
-            <option value="">to...</option>
-        </select>
-    </div>
+        <div class="selector">
 
-    <div>
-        <label>Cheapest <input class="cheapest-btn" type="radio" name="type-sort" value="cheapest" checked/></label>
-        <label>Fastest <input class="fastest-btn" type="radio" name="type-sort" value="fastest" /></label>
-    </div>
+            <div class="input-group from">
+                <input type="text" class="form-control" aria-label="from" placeholder="From..." readonly>
+                <div class="input-group-btn">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                        <span class="sr-only">From...</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right"></ul>
+                </div>
+            </div>
 
-    <div>
-        <button class="search-btn">Search</button>
+            <div class="input-group to">
+                <input type="text" class="form-control" aria-label="to" placeholder="To..." readonly>
+                <div class="input-group-btn">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                        <span class="sr-only">To...</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right"></ul>
+                </div>
+            </div>
+
+            <div class="btn-group type-sort" data-toggle="buttons">
+                <label class="btn btn-primary active">
+                    <input class="cheapest-btn" type="radio" name="type-sort" value="cheapest" checked/> Cheapest
+                </label>
+                <label class="btn btn-primary">
+                    <input class="fastest-btn" type="radio" name="type-sort" value="fastest" /> Fastest
+                </label>
+            </div>
+
+            <div class="btn-group search pull-right">
+                <button type="button" class="btn btn-success" aria-label="Search">
+                    <span class="glyphicon glyphicon-search"></span> Search
+                </button>
+            </div>
+
+        </div>
+
+        <div class="result hidden">
+            <ul class="list-trips"></ul>
+            <div class="btn-group reset pull-right">
+                <button type="button" class="btn btn-success" aria-label="Reset">
+                    <span class="glyphicon glyphicon-repeat"></span> Reset
+                </button>
+            </div>
+        </div>
+        
     </div>
+    
 </div>
-
-<ul class="result"></ul>

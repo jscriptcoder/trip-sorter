@@ -1,32 +1,7 @@
-import * as utils from '../utils/utils';
+import './trip-selector.css!'; // trip-selector styles
 import tripSelView from './trip-selector.html!text'; // trip-selector view HTML
-
-/**
- * This structure will help us sort trips by cheapest or fastest.
- * @readonly
- * @@enum {Function}
- * @example: let sortedTrips = TYPE_SORT[type_param](trips);
- */
-const TYPE_SORT = {
-    cheapest(trips) {
-        return trips.sort((trip1, trip2) => trip1.cost > trip2.cost );
-    },
-    fastest(trips) {
-        return trips.sort((trip1, trip2) => utils.duration2Minutes(trip1.duration) > utils.duration2Minutes(trip2.duration));
-    }
-};
-
-/**
- * Template html for the item result (li element)
- * @type String
- */
-const RESULT_ITEM_TMPL = `
-    <li>
-        <div class="trip">%departure% &gt; %arrival%</div>
-        <div class="price">%price%</div>
-        <div class="details">%details%</div>
-    </li>
-`;
+import * as utils from '../utils/utils'; // some utilities
+import {TYPE_SORT, RESULT_ITEM_TMPL, TOTAL_ITEM_TMPL} from './trip-selector-const';
 
 /**
  * Trip Selector widget. Contains all the logic
@@ -57,17 +32,24 @@ export default class TripSelector {
     
     /**
      * Departures dropdown
-     * @type HTMLSelectElement
+     * @type HTMLUListElement
      * @private
      */
-    from: HTMLSelectElement;
+    from: HTMLUListElement;
     
     /**
      * Arrivals dropdown
-     * @type HTMLSelectElement
+     * @type HTMLUListElement
      * @private
      */
-    to: HTMLSelectElement;
+    to: HTMLUListElement;
+    
+    /**
+     * Results list
+     * @type HTMLUListElement
+     * @private
+     */
+    trips: HTMLUListElement;
     
     /**
      * Radiobutton cheapest
@@ -89,6 +71,13 @@ export default class TripSelector {
      * @private
      */
     search: HTMLButtonElement;
+    
+    /**
+     * Button reset
+     * @type HTMLButtonElement
+     * @private
+     */
+    reset: HTMLButtonElement;
     
     /**
      * Backend response
@@ -116,13 +105,19 @@ export default class TripSelector {
     init(htmlView = tripSelView) {
         this.el.innerHTML = htmlView;
         
+        // gets a hold of the DOM elements
         this.selector = this.el.querySelector('.selector');
         this.result = this.el.querySelector('.result');
-        this.from = this.el.querySelector('.from-sel');
-        this.to = this.el.querySelector('.to-sel');
+        
+        this.from = this.el.querySelector('.from ul');
+        this.to = this.el.querySelector('.to ul');
+        this.trips = this.el.querySelector('.result ul');
+        
         this.cheapest = this.el.querySelector('.cheapest-btn');
         this.fastest = this.el.querySelector('.fastest-btn');
-        this.search = this.el.querySelector('.search-btn');
+        
+        this.search = this.el.querySelector('.search button');
+        this.reset = this.el.querySelector('.reset button');
 
         this.initDropdowns();
         this.initEventListeners();
@@ -134,19 +129,19 @@ export default class TripSelector {
      */
     initDropdowns() {
         
-        // Here you see the power of functional programming ;-)
+        // here you see the power of functional programming ;-)
         this.api.deals
             .map((deal) => deal.departure) // only departures
             .filter((deal, pos, arr) => arr.indexOf(deal) == pos) // removes duplicates
             .sort() // sorts asc
-            .forEach((city) => { this.from.appendChild(utils.string2Element(`<option value="${city}">${city}</option>`)) });
+            .forEach((city) => this.from.appendChild(utils.string2Element(`<li data-value="${city}"><a href="#">${city}</a></li>`)));
 
-        // We could simple reuse departure cities, but in case they are different from arrival cities
+        // we could simple reuse departure cities, but in case they are different from arrival cities
         this.api.deals
             .map((deal) => deal.arrival) // only arrivals
             .filter((deal, pos, arr) => arr.indexOf(deal) == pos) // removes duplicates
             .sort() // sorts asc
-            .forEach((city) => { this.to.appendChild(utils.string2Element(`<option value="${city}">${city}</option>`)) });
+            .forEach((city) => this.to.appendChild(utils.string2Element(`<li data-value="${city}"><a href="#">${city}</a></li>`)));
         
     }
     
@@ -155,7 +150,29 @@ export default class TripSelector {
      * @private
      */
     initEventListeners() {
+        this.from.addEventListener('click', this.onDropdownClick.bind(this));
+        this.to.addEventListener('click', this.onDropdownClick.bind(this));
         this.search.addEventListener('click', this.onSearchClick.bind(this));
+        this.reset.addEventListener('click', this.onResetClick.bind(this));
+    }
+    
+    /**
+     * Gets trigger when the user clicks on the list.
+     * We do event delegation here.
+     * @event
+     * @private
+     */
+    onDropdownClick(event) {
+        const target = event.target;
+        
+        // in case we click on the A element, we need the parent LI
+        const item = target.nodeName === 'A' ? target.parentElement : target;
+        
+        if (item.nodeName === 'LI') {
+            const menu = item.parentElement;
+            const input = utils.findElementInParents(item, 'input');
+            menu.dataset['selected'] = input.value = item.dataset['value']; 
+        }
     }
     
     /**
@@ -164,8 +181,8 @@ export default class TripSelector {
      * @private
      */
     onSearchClick() {
-        const departure = this.from.value;
-        const arrival = this.to.value;
+        const departure = this.from.dataset['selected'];
+        const arrival = this.to.dataset['selected'];
         const sortType = this.getSortType();
         let trips = [];
 
@@ -190,8 +207,20 @@ export default class TripSelector {
     }
     
     /**
+     * Gets trigger when the user clicks on reset button
+     * @event
+     * @private
+     */
+    onResetClick() {
+        this.result.classList.add('hidden');
+        this.selector.classList.remove('hidden');
+        this.trips.innerHTML = '';
+    }
+    
+    /**
      * Returns the sorting selected
      * @return {String} - "cheapest" | "fastest"
+     * @public
      */
     getSortType() {
         return this.cheapest.checked ? this.cheapest.value : this.fastest.value;
@@ -206,29 +235,37 @@ export default class TripSelector {
         let totalCost = 0;
         let totalMins = 0;
         
-        this.selector.style.display = 'none';
-        this.result.innerHTML = '';
+        this.selector.classList.add('hidden');
+        this.result.classList.remove('hidden');
         
+        this.trips.innerHTML = '';
+        
+        // let's iterate over the results and build the DOM list
         for (let trip of trips) {
             
-            let compiledItem = utils.compileTemplate(RESULT_ITEM_TMPL, {
+            const compiledItem = utils.compileTemplate(RESULT_ITEM_TMPL, {
                 departure: trip.departure,
                 arrival: trip.arrival,
                 price: `${this.api.currency}${trip.cost}`,
-                details: `${trip.transport} ${trip.reference} ${trip.duration.h}h${trip.duration.m}`
+                details: `${trip.transport} - ${trip.reference} for ${trip.duration.h}h${trip.duration.m}`
             });
             
-            let item = utils.string2Element(compiledItem);
+            const item = utils.string2Element(compiledItem);
             
-            this.result.appendChild(item);
+            this.trips.appendChild(item);
             
+            // accumulators
             totalCost += trip.cost;
             totalMins += utils.duration2Minutes(trip.duration);
         }
         
         const totalDuration = utils.minutes2Duration(totalMins);
-        const itemResult = utils.string2Element(`<li>Total ${totalDuration.h}h${totalDuration.m} ${this.api.currency}${totalCost}</li>`);
-        this.result.appendChild(itemResult);
+        const itemTotal = utils.string2Element(utils.compileTemplate(TOTAL_ITEM_TMPL, {
+            duration: `${totalDuration.h}h${totalDuration.m}`,
+            cost: `${this.api.currency}${totalCost}`
+        }));
+        
+        this.trips.appendChild(itemTotal);
 
     }
     

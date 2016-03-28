@@ -45,3 +45,21 @@ export function compileTemplate(tmpl, keyMap) {
 
     return tmpl;
 }
+
+/**
+ * Finds an element in the parents of the given element
+ * @param {HTMLElement} child
+ * @param {String} selector
+ * @return {HTMLElement}
+ */
+export function findElementInParents(child, selector) {
+    let parent = child.parentElement;
+    if (parent) {
+        const element = parent.querySelector(selector);
+        if (element) {
+            return element;
+        } else {
+            return findElementInParents(parent, selector);
+        }
+    }
+}
