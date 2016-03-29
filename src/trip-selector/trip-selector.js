@@ -270,6 +270,7 @@ export default class TripSelector {
             
             const item = utils.string2Element(compiledItem);
             
+            // TO-DO: use a documentFragment to optimize the DOM manipulation
             this.trips.appendChild(item);
             
             // accumulators
@@ -287,6 +288,12 @@ export default class TripSelector {
 
     }
     
+    /**
+     * Shows an alert message
+     * @param {String} message
+     * @param {String} [type='danger']
+     * @private
+     */
     shotAlert(message, type = 'danger') {
         this.alert.innerHTML = message;
         this.alert.classList.add(`alert-${type}`);
@@ -301,6 +308,10 @@ export default class TripSelector {
         document.addEventListener('click', onDocumentClick);
     }
     
+    /**
+     * Hides the alert
+     * @private
+     */
     hideAlert() {
         this.alert.innerHTML = '';
         this.alert.classList.remove('show');
