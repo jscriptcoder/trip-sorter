@@ -10,6 +10,12 @@ html, body {
 /* End General */
 
 /* Loading animation */
+@-webkit-keyframes loading {
+    25% { content: "Loading app."; }
+    50% { content: "Loading app.."; }
+    75% { content: "Loading app..."; }
+}
+
 @keyframes loading {
     25% { content: "Loading app."; }
     50% { content: "Loading app.."; }
@@ -24,6 +30,7 @@ html, body {
 
 .loading:before {
     content: "Loading app";
+    -webkit-animation: loading 0.8s infinite;
     animation: loading 0.8s infinite;
 }
 /* End Loading */
