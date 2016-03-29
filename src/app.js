@@ -14,5 +14,5 @@ console.log('JSON response:', api);
 const app = document.getElementById('app');
 app.innerHTML = appView;
 
-// instantiate the trip selector widget
+// instantiates the trip selector widget
 const tripSelector = new TripSelector(document.getElementById('trip-selector'), api);
