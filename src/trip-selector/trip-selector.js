@@ -150,6 +150,9 @@ export default class TripSelector {
             .filter((deal, pos, arr) => arr.indexOf(deal) == pos) // removes duplicates
             .sort() // sorts asc
             .forEach((city) => this.to.appendChild(utils.string2Element(`<li data-value="${city}"><a href="#">${city}</a></li>`)));
+     
+        // TO-DO: use a documentFragment to optimize the insertion of LI elements without 
+        // triggering new browser rendering
         
     }
     
