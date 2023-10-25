@@ -1,5 +1,3 @@
-# trip-sorter
+# trip-sorter - Home Assignment Test
 
 Toying aroung with jspm
-
-Peek a look: https://mango-actor.codio.io/
